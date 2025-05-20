@@ -1,3 +1,5 @@
+using API.Middlewares;
+
 namespace API;
 
 public class Program
@@ -17,6 +19,10 @@ public class Program
         app.UseRouting();
         app.UseAuthorization();
         app.MapControllers();
+        
+        // Custom Middlewares
+        app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
 
         app.Run();
     }
