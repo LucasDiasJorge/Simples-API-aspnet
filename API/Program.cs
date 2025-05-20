@@ -14,13 +14,6 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddAuthorization();
         
-        var app = builder.Build();
-
-        app.MapGet("/health", () => Results.Ok(new { Status = "Healthy" }));
-
-        // Enable routing and controllers
-        app.UseRouting();
-
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -37,7 +30,14 @@ public class Program
             });
 
         builder.Services.AddAuthorization();
+        
+        var app = builder.Build();
 
+        app.MapGet("/health", () => Results.Ok(new { Status = "Healthy" }));
+
+        // Enable routing and controllers
+        app.UseRouting();
+        app.UseAuthentication();
         app.MapControllers();
         
         // Custom Middlewares
