@@ -1,17 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using API;
 using API.Models;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize] // Protects all routes except login
 public class UsersController : ControllerBase
 {
+    private SecurityService _securityService;
+
+    public UsersController(SecurityService securityService)
+    {
+        _securityService = securityService;
+    }
+
     private static List<User> users = new List<User>
     {
-        new User { Id = 1, Name = "Alice", Email = "alice@example.com" },
-        new User { Id = 2, Name = "Bob", Email = "bob@example.com" }
+        new User { Id = 1, Name = "Alice", Email = "alice@example.com", Password = "alicestrongpass" },
+        new User { Id = 2, Name = "Bob", Email = "bob@example.com", Password = "bobstrongpass" }
     };
+
+    // CRUD Operations
 
     [HttpGet]
     public IActionResult GetAllUsers()
@@ -39,9 +51,10 @@ public class UsersController : ControllerBase
     {
         var user = users.FirstOrDefault(u => u.Id == id);
         if (user == null) return NotFound();
-        
+
         user.Name = updatedUser.Name;
         user.Email = updatedUser.Email;
+        user.Password = updatedUser.Password;
         return NoContent();
     }
 
@@ -53,5 +66,21 @@ public class UsersController : ControllerBase
 
         users.Remove(user);
         return NoContent();
+    }
+
+    // Login Method
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public IActionResult Login([FromBody] LoginModel login)
+    {
+        var user = users.FirstOrDefault(u => u.Email == login.Username);
+
+        if (user != null && _securityService.VerifyPassword(login.Password, user.Password))
+        {
+            var token = _securityService.GenerateJwtToken(user.Email);
+            return Ok(new { token });
+        }
+
+        return Unauthorized("Invalid credentials.");
     }
 }

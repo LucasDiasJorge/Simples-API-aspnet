@@ -12,7 +12,8 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         
         builder.Services.AddControllers();
-        builder.Services.AddAuthorization();
+
+        builder.Services.AddTransient<SecurityService>();
         
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -37,7 +38,7 @@ public class Program
 
         // Enable routing and controllers
         app.UseRouting();
-        app.UseAuthentication();
+        app.UseAuthorization();
         app.MapControllers();
         
         // Custom Middlewares

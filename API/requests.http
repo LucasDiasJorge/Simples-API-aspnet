@@ -1,0 +1,46 @@
+﻿@baseUrl = http://localhost:5196/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImp0aSI6IjgxYjM4MmQ5LTkyNDctNDA1Ni04ZDVhLWNlMzJjYTc1MzM1MyIsImV4cCI6MTc0NzcwOTIyNCwiaXNzIjoibXktYXBpIiwiYXVkIjoibXktYXVkaWVuY2UifQ.rgKmwxf9XxjAAjgUQs79VY2v0K23ODgV3GcJzqW5w_I
+
+### Login and obtain JWT token
+# This request retrieves the token and sets it as a variable for subsequent calls
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "username": "alice@example.com",
+  "password": "alicestrongpass"
+}
+
+### Get all users (Requires authentication)
+GET {{baseUrl}}/users
+Authorization: Bearer {{token}}
+
+### Get a specific user by ID (Requires authentication)
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{token}}
+
+### Create a new user (Requires authentication)
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Charlie",
+  "email": "charlie@example.com",
+  "password": "charliestrongpass"
+}
+
+### Update a user (Requires authentication)
+PUT {{baseUrl}}/users/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Alice Updated",
+  "email": "aliceupdated@example.com",
+  "password": "newstrongpass"
+}
+
+### Delete a user (Requires authentication)
+DELETE {{baseUrl}}/users/2
+Authorization: Bearer {{token}}
