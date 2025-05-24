@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using API;
 using API.Models;
+using API.Utils;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -26,52 +27,131 @@ public class UsersController : ControllerBase
     // CRUD Operations
 
     [HttpGet]
-    public IActionResult GetAllUsers()
+    public ActionResult<ResponseEntity> GetAllUsers()
     {
-        return Ok(users);
+        var response = new ResponseEntity()
+        {
+            Status = "Success",
+            Message = "This is a sample response entity.",
+            Data = users
+        };
+        
+        return Ok(response);
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetUserById(int id)
+    public ActionResult<ResponseEntity> GetUserById(int id)
     {
         var user = users.FirstOrDefault(u => u.Id == id);
-        return user != null ? Ok(user) : NotFound();
+    
+        if (user == null)
+        {
+            return NotFound(new ResponseEntity
+            {
+                Status = "Error",
+                Message = $"User with ID {id} not found.",
+                Data = null
+            });
+        }
+
+        var response = new ResponseEntity
+        {
+            Status = "Success",
+            Message = "User found successfully.",
+            Data = user
+        };
+
+        return Ok(response);
     }
 
+
+
     [HttpPost]
-    public IActionResult CreateUser([FromBody] User user)
+    public ActionResult<ResponseEntity> CreateUser([FromBody] User user)
     {
         user.Id = users.Count + 1;
         users.Add(user);
-        return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+
+        var response = new ResponseEntity()
+        {
+            Status = "Success",
+            Message = "User created successfully.",
+            Data = user
+        };
+        
+        return CreatedAtAction(nameof(GetUserById),response);
     }
 
     [HttpPut("{id}")]
-    public IActionResult UpdateUser(int id, [FromBody] User updatedUser)
+    public ActionResult<ResponseEntity> UpdateUser(int id, [FromBody] User updatedUser)
     {
         var user = users.FirstOrDefault(u => u.Id == id);
-        if (user == null) return NotFound();
 
-        user.Name = updatedUser.Name;
-        user.Email = updatedUser.Email;
-        user.Password = updatedUser.Password;
-        return NoContent();
+        if (user == null)
+        {
+
+            var response = new ResponseEntity()
+            {
+                Status = "Error",
+                Message = $"User with ID {id} not found.",
+            };
+            
+            return NotFound(response);
+        
+        }
+        else
+        {
+            
+            user.Name = updatedUser.Name;
+            user.Email = updatedUser.Email;
+            user.Password = updatedUser.Password;
+
+            var response = new ResponseEntity()
+            {
+                Status = "Success",
+                Message = "User updated successfully.",
+                Data = user
+            };
+            
+            return Ok(response);
+
+        }
     }
 
     [HttpDelete("{id}")]
-    public IActionResult DeleteUser(int id)
+    public ActionResult<ResponseEntity> DeleteUser(int id)
     {
         var user = users.FirstOrDefault(u => u.Id == id);
-        if (user == null) return NotFound();
+        if (user == null)
+        {
 
-        users.Remove(user);
-        return NoContent();
+            var response = new ResponseEntity()
+            {
+                Status = "Error",
+                Message = $"User with ID {id} not found.",
+            };
+            
+            return NotFound(response);
+        
+        }
+        else
+        {
+            users.Remove(user);
+
+            var response = new ResponseEntity()
+            {
+                Status = "Success",
+                Message = "User deleted successfully.",
+                Data = user
+            };
+            return (response);
+        }
     }
 
     // Login Method
     [AllowAnonymous]
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginModel login)
+    public ActionResult<ResponseEntity> Login([FromBody] LoginModel login)
     {
         var user = users.FirstOrDefault(u => u.Email == login.Username);
 

@@ -1,5 +1,5 @@
 ﻿@baseUrl = http://localhost:5196/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImp0aSI6IjgxYjM4MmQ5LTkyNDctNDA1Ni04ZDVhLWNlMzJjYTc1MzM1MyIsImV4cCI6MTc0NzcwOTIyNCwiaXNzIjoibXktYXBpIiwiYXVkIjoibXktYXVkaWVuY2UifQ.rgKmwxf9XxjAAjgUQs79VY2v0K23ODgV3GcJzqW5w_I
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImp0aSI6ImQwNWUzYmRlLTgwNTgtNGMwNy04Y2YxLTEyMmI1MGMzNDY4NyIsImV4cCI6MTc0ODA1NzA1MCwiaXNzIjoibXktYXBpIiwiYXVkIjoibXktYXVkaWVuY2UifQ.2wZ92QHqxbIDTanmGsZT5Ss84vZVtce1V8gGkditaM0
 
 ### Login and obtain JWT token
 # This request retrieves the token and sets it as a variable for subsequent calls
