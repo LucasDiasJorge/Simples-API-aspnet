@@ -27,9 +27,9 @@ public class UsersController : ControllerBase
     // CRUD Operations
 
     [HttpGet]
-    public ActionResult<ResponseEntity> GetAllUsers()
+    public ActionResult<ResponseEntity<User>> GetAllUsers()
     {
-        var response = new ResponseEntity()
+        var response = new ResponseEntity<List<User>>()
         {
             Status = "Success",
             Message = "This is a sample response entity.",
@@ -40,13 +40,13 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<ResponseEntity> GetUserById(int id)
+    public ActionResult<ResponseEntity<User>> GetUserById(int id)
     {
         var user = users.FirstOrDefault(u => u.Id == id);
     
         if (user == null)
         {
-            return NotFound(new ResponseEntity
+            return NotFound(new ResponseEntity<User>()
             {
                 Status = "Error",
                 Message = $"User with ID {id} not found.",
@@ -54,7 +54,7 @@ public class UsersController : ControllerBase
             });
         }
 
-        var response = new ResponseEntity
+        var response = new ResponseEntity<User>()
         {
             Status = "Success",
             Message = "User found successfully.",
@@ -67,12 +67,12 @@ public class UsersController : ControllerBase
 
 
     [HttpPost]
-    public ActionResult<ResponseEntity> CreateUser([FromBody] User user)
+    public ActionResult<ResponseEntity<User>> CreateUser([FromBody] User user)
     {
         user.Id = users.Count + 1;
         users.Add(user);
 
-        var response = new ResponseEntity()
+        var response = new ResponseEntity<User>()
         {
             Status = "Success",
             Message = "User created successfully.",
@@ -83,14 +83,14 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public ActionResult<ResponseEntity> UpdateUser(int id, [FromBody] User updatedUser)
+    public ActionResult<ResponseEntity<User>> UpdateUser(int id, [FromBody] User updatedUser)
     {
         var user = users.FirstOrDefault(u => u.Id == id);
 
         if (user == null)
         {
 
-            var response = new ResponseEntity()
+            var response = new ResponseEntity<User>()
             {
                 Status = "Error",
                 Message = $"User with ID {id} not found.",
@@ -106,7 +106,7 @@ public class UsersController : ControllerBase
             user.Email = updatedUser.Email;
             user.Password = updatedUser.Password;
 
-            var response = new ResponseEntity()
+            var response = new ResponseEntity<User>()
             {
                 Status = "Success",
                 Message = "User updated successfully.",
@@ -119,13 +119,13 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public ActionResult<ResponseEntity> DeleteUser(int id)
+    public ActionResult<ResponseEntity<User>> DeleteUser(int id)
     {
         var user = users.FirstOrDefault(u => u.Id == id);
         if (user == null)
         {
 
-            var response = new ResponseEntity()
+            var response = new ResponseEntity<User>()
             {
                 Status = "Error",
                 Message = $"User with ID {id} not found.",
@@ -138,7 +138,7 @@ public class UsersController : ControllerBase
         {
             users.Remove(user);
 
-            var response = new ResponseEntity()
+            var response = new ResponseEntity<User>()
             {
                 Status = "Success",
                 Message = "User deleted successfully.",
@@ -151,7 +151,7 @@ public class UsersController : ControllerBase
     // Login Method
     [AllowAnonymous]
     [HttpPost("login")]
-    public ActionResult<ResponseEntity> Login([FromBody] LoginModel login)
+    public ActionResult<ResponseEntity<object>> Login([FromBody] LoginModel login)
     {
         var user = users.FirstOrDefault(u => u.Email == login.Username);
 
