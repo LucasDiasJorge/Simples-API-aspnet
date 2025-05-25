@@ -19,6 +19,10 @@ public class Program
         builder.Services.AddTransient<SecurityService>();
         
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+
+
+
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
