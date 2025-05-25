@@ -1,6 +1,9 @@
 using System.Text;
 using API.Middlewares;
+using API.Models;
+using API.Utils.DB;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API;
@@ -41,10 +44,36 @@ public class Program
         app.UseAuthorization();
         app.MapControllers();
         
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            SeedData(dbContext);
+        }
+        
         // Custom Middlewares
         app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
 
         app.Run();
+    }
+    
+    private static void SeedData(ApplicationDbContext context)
+    {
+        // Ensure the company exists first, or create one
+        var company = context.Companies.FirstOrDefault(c => c.Name == "Alice's store") ?? new Company("Alice's store");
+
+        if (!context.Companies.Any(c => c.Name == "Alice's store"))
+        {
+            context.Companies.Add(company);
+            context.SaveChanges();
+        }
+
+        if (!context.Users.Any(u => u.Email == "alice@example.com"))
+        {
+            var alice = new User("Alice", "alice@example.com", "alicestrongpass"); 
+            alice.Company = company;  // ✅ Assign the navigation property separately
+            context.Users.Add(alice);
+            context.SaveChanges();
+        }
     }
 }
