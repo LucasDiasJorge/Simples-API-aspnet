@@ -18,6 +18,7 @@ public class Program
 
         builder.Services.AddTransient<SecurityService>();
         
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
