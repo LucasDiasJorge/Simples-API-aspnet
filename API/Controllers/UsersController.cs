@@ -20,8 +20,8 @@ public class UsersController : ControllerBase
 
     private static List<User> users = new List<User>
     {
-        new User { Id = 1, Name = "Alice", Email = "alice@example.com", Password = "alicestrongpass" },
-        new User { Id = 2, Name = "Bob", Email = "bob@example.com", Password = "bobstrongpass" }
+        new User(1, "Alice", "alice@example.com", "alicestrongpass", new Company(1,"Alice's store")) {},
+        new User(2, "Bob", "bob@example.com", "bobstrongpass", new Company(2,"Bob's store"))
     };
 
     // CRUD Operations
@@ -42,7 +42,7 @@ public class UsersController : ControllerBase
     [HttpGet("{id}")]
     public ActionResult<ResponseEntity<User>> GetUserById(int id)
     {
-        var user = users.FirstOrDefault(u => u.Id == id);
+        var user = users.FirstOrDefault(u => u.ID == id);
     
         if (user == null)
         {
@@ -69,7 +69,7 @@ public class UsersController : ControllerBase
     [HttpPost]
     public ActionResult<ResponseEntity<User>> CreateUser([FromBody] User user)
     {
-        user.Id = users.Count + 1;
+        user.ID = users.Count + 1;
         users.Add(user);
 
         var response = new ResponseEntity<User>()
@@ -85,7 +85,7 @@ public class UsersController : ControllerBase
     [HttpPut("{id}")]
     public ActionResult<ResponseEntity<User>> UpdateUser(int id, [FromBody] User updatedUser)
     {
-        var user = users.FirstOrDefault(u => u.Id == id);
+        var user = users.FirstOrDefault(u => u.ID == id);
 
         if (user == null)
         {
@@ -121,7 +121,7 @@ public class UsersController : ControllerBase
     [HttpDelete("{id}")]
     public ActionResult<ResponseEntity<User>> DeleteUser(int id)
     {
-        var user = users.FirstOrDefault(u => u.Id == id);
+        var user = users.FirstOrDefault(u => u.ID == id);
         if (user == null)
         {
 
