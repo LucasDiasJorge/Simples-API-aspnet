@@ -6,23 +6,23 @@ public class User
 {
 
     [Key]
-    public int ID { get; set; } // Primary key
+    public Guid Id { get; set; } = Guid.NewGuid();
+    
+    [StringLength(64)]
     public string Name { get; set; }
+    
+    [EmailAddress]
     public string Email { get; set; }
+    
     public string Password { get; set; }
     
-    [Key]
-    [Required]
     public Company Company { get; set; }
     
-    public User(int id, string name, string email, string password, Company company)
+    public User(string name, string email, string password)
     {
-        ID = id;
         Name = name;
         Email = email;
         Password = password;
-        Company = company;
     }
-    
 }
 

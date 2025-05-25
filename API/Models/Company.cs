@@ -5,13 +5,13 @@ namespace API.Models;
 public class Company
 {
     [Key] 
-    public int ID { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     
+    [StringLength(64)]
     public string Name { get; set; }
 
-    public Company(int id, string name)
-    {
-        ID = id;
+    public Company(string name)
+    { 
         Name = name;
     }
 

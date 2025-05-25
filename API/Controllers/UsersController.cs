@@ -5,48 +5,45 @@ using System.Linq;
 using API;
 using API.Models;
 using API.Utils;
+using API.Utils.DB;
+using Microsoft.EntityFrameworkCore;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize] // Protects all routes except login
 public class UsersController : ControllerBase
 {
-    private SecurityService _securityService;
+    private readonly ApplicationDbContext _context;
+    private readonly SecurityService _securityService;
 
-    public UsersController(SecurityService securityService)
+    public UsersController(ApplicationDbContext context, SecurityService securityService)
     {
+        _context = context;
         _securityService = securityService;
     }
 
-    private static List<User> users = new List<User>
-    {
-        new User(1, "Alice", "alice@example.com", "alicestrongpass", new Company(1,"Alice's store")) {},
-        new User(2, "Bob", "bob@example.com", "bobstrongpass", new Company(2,"Bob's store"))
-    };
-
-    // CRUD Operations
-
+    // Get all users
     [HttpGet]
-    public ActionResult<ResponseEntity<User>> GetAllUsers()
+    public async Task<ActionResult<ResponseEntity<List<User>>>> GetAllUsers()
     {
-        var response = new ResponseEntity<List<User>>()
+        var users = await _context.Users.Include(u => u.Company).ToListAsync();
+        return Ok(new ResponseEntity<List<User>>
         {
             Status = "Success",
-            Message = "This is a sample response entity.",
+            Message = "User list retrieved successfully.",
             Data = users
-        };
-        
-        return Ok(response);
+        });
     }
 
+    // Get user by ID
     [HttpGet("{id}")]
-    public ActionResult<ResponseEntity<User>> GetUserById(int id)
+    public async Task<ActionResult<ResponseEntity<User>>> GetUserById(int id)
     {
-        var user = users.FirstOrDefault(u => u.ID == id);
-    
+        var user = await _context.Users.Include(u => u.Company).FirstOrDefaultAsync(u => u.Id.Equals(id));
+
         if (user == null)
         {
-            return NotFound(new ResponseEntity<User>()
+            return NotFound(new ResponseEntity<User>
             {
                 Status = "Error",
                 Message = $"User with ID {id} not found.",
@@ -54,106 +51,89 @@ public class UsersController : ControllerBase
             });
         }
 
-        var response = new ResponseEntity<User>()
+        return Ok(new ResponseEntity<User>
         {
             Status = "Success",
             Message = "User found successfully.",
             Data = user
-        };
-
-        return Ok(response);
+        });
     }
 
-
-
+    // Create user
     [HttpPost]
-    public ActionResult<ResponseEntity<User>> CreateUser([FromBody] User user)
+    public async Task<ActionResult<ResponseEntity<User>>> CreateUser([FromBody] User user)
     {
-        user.ID = users.Count + 1;
-        users.Add(user);
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
 
-        var response = new ResponseEntity<User>()
+        return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, new ResponseEntity<User>
         {
             Status = "Success",
             Message = "User created successfully.",
             Data = user
-        };
-        
-        return CreatedAtAction(nameof(GetUserById),response);
+        });
     }
 
+    // Update user
     [HttpPut("{id}")]
-    public ActionResult<ResponseEntity<User>> UpdateUser(int id, [FromBody] User updatedUser)
+    public async Task<ActionResult<ResponseEntity<User>>> UpdateUser(int id, [FromBody] User updatedUser)
     {
-        var user = users.FirstOrDefault(u => u.ID == id);
-
+        var user = await _context.Users.FindAsync(id);
         if (user == null)
         {
-
-            var response = new ResponseEntity<User>()
+            return NotFound(new ResponseEntity<User>
             {
                 Status = "Error",
-                Message = $"User with ID {id} not found.",
-            };
-            
-            return NotFound(response);
-        
+                Message = $"User with ID {id} not found."
+            });
         }
-        else
+
+        user.Name = updatedUser.Name;
+        user.Email = updatedUser.Email;
+        user.Password = updatedUser.Password;
+        user.Company = updatedUser.Company;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new ResponseEntity<User>
         {
-            
-            user.Name = updatedUser.Name;
-            user.Email = updatedUser.Email;
-            user.Password = updatedUser.Password;
-
-            var response = new ResponseEntity<User>()
-            {
-                Status = "Success",
-                Message = "User updated successfully.",
-                Data = user
-            };
-            
-            return Ok(response);
-
-        }
+            Status = "Success",
+            Message = "User updated successfully.",
+            Data = user
+        });
     }
 
+    // Delete user
     [HttpDelete("{id}")]
-    public ActionResult<ResponseEntity<User>> DeleteUser(int id)
+    public async Task<ActionResult<ResponseEntity<User>>> DeleteUser(int id)
     {
-        var user = users.FirstOrDefault(u => u.ID == id);
+        var user = await _context.Users.FindAsync(id);
         if (user == null)
         {
-
-            var response = new ResponseEntity<User>()
+            return NotFound(new ResponseEntity<User>
             {
                 Status = "Error",
-                Message = $"User with ID {id} not found.",
-            };
-            
-            return NotFound(response);
-        
+                Message = $"User with ID {id} not found."
+            });
         }
-        else
-        {
-            users.Remove(user);
 
-            var response = new ResponseEntity<User>()
-            {
-                Status = "Success",
-                Message = "User deleted successfully.",
-                Data = user
-            };
-            return (response);
-        }
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+
+        return Ok(new ResponseEntity<User>
+        {
+            Status = "Success",
+            Message = "User deleted successfully.",
+            Data = user
+        });
     }
 
-    // Login Method
+    // Login method
     [AllowAnonymous]
     [HttpPost("login")]
     public ActionResult<ResponseEntity<object>> Login([FromBody] LoginModel login)
     {
-        var user = users.FirstOrDefault(u => u.Email == login.Username);
+        var user = _context.Users.FirstOrDefault(u => u.Email == login.Username);
 
         if (user != null && _securityService.VerifyPassword(login.Password, user.Password))
         {
