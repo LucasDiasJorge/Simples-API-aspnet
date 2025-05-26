@@ -16,11 +16,15 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        
+        modelBuilder.Entity<Company>()
+            .HasIndex(c => c.Name)
+            .IsUnique();
+        
         modelBuilder.Entity<User>()
-            .HasOne(u => u.Company) // Define relationship
-            .WithMany()
-            .HasForeignKey("CompanyId"); // FK reference
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
     }
     
-
 }

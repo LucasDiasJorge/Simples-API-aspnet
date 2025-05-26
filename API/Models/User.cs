@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Models;
 
@@ -16,7 +17,9 @@ public class User
     
     public string Password { get; set; }
     
-    public Company Company { get; set; }
+    [ForeignKey("CompanyId")]
+    public Guid CompanyId { get; set; }
+
     
     public User(string name, string email, string password)
     {

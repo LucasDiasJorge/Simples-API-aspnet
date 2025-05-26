@@ -76,7 +76,7 @@ public class Program
         if (!context.Users.Any(u => u.Email == "alice@example.com"))
         {
             var alice = new User("Alice", "alice@example.com", "alicestrongpass"); 
-            alice.Company = company;  // ✅ Assign the navigation property separately
+            alice.CompanyId = company.Id;  // ✅ Assign the navigation property separately
             context.Users.Add(alice);
             context.SaveChanges();
         }

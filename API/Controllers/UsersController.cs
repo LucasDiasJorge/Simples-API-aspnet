@@ -26,7 +26,7 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ResponseEntity<List<User>>>> GetAllUsers()
     {
-        var users = await _context.Users.Include(u => u.Company).ToListAsync();
+        var users = await _context.Users.Include(u => u.CompanyId).ToListAsync();
         return Ok(new ResponseEntity<List<User>>
         {
             Status = "Success",
@@ -39,7 +39,7 @@ public class UsersController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ResponseEntity<User>>> GetUserById(int id)
     {
-        var user = await _context.Users.Include(u => u.Company).FirstOrDefaultAsync(u => u.Id.Equals(id));
+        var user = await _context.Users.Include(u => u.CompanyId).FirstOrDefaultAsync(u => u.Id.Equals(id));
 
         if (user == null)
         {
@@ -91,7 +91,7 @@ public class UsersController : ControllerBase
         user.Name = updatedUser.Name;
         user.Email = updatedUser.Email;
         user.Password = updatedUser.Password;
-        user.Company = updatedUser.Company;
+        user.CompanyId = updatedUser.CompanyId;
 
         await _context.SaveChangesAsync();
 
