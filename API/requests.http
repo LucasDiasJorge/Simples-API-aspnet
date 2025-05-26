@@ -1,5 +1,5 @@
 ﻿@baseUrl = http://localhost:5196/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImp0aSI6ImQwNWUzYmRlLTgwNTgtNGMwNy04Y2YxLTEyMmI1MGMzNDY4NyIsImV4cCI6MTc0ODA1NzA1MCwiaXNzIjoibXktYXBpIiwiYXVkIjoibXktYXVkaWVuY2UifQ.2wZ92QHqxbIDTanmGsZT5Ss84vZVtce1V8gGkditaM0
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImp0aSI6IjQxNzE4OTE5LTgxMTAtNDFlOC1hYjQ3LWIzYjJkNzUyNDk5ZiIsImV4cCI6MTc0ODIyMzQ5MSwiaXNzIjoibXktYXBpIiwiYXVkIjoibXktYXVkaWVuY2UifQ.Kvtkxw45AVAlHBy3YSdJPHWD1LKSNXGA9x8BmECaszQ
 
 ### Login and obtain JWT token
 # This request retrieves the token and sets it as a variable for subsequent calls
@@ -26,8 +26,9 @@ Content-Type: application/json
 
 {
   "name": "Charlie",
-  "email": "charlie@example.com",
-  "password": "charliestrongpass"
+  "email": "charlies@example.com",
+  "password": "charliestrongpass",
+  "companyId": "a4325c0d-bc0a-47ca-bdf2-847ab76c1ef2"
 }
 
 ### Update a user (Requires authentication)
