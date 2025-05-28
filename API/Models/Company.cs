@@ -8,11 +8,6 @@ public class Company
     public Guid Id { get; set; } = Guid.NewGuid();
     
     [StringLength(64)]
-    public string Name { get; set; }
-
-    public Company(string name)
-    { 
-        Name = name;
-    }
+    public string? Name { get; set; }
 
 }

@@ -21,8 +21,6 @@ public class Program
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
 
-
-
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -65,18 +63,18 @@ public class Program
     private static void SeedData(ApplicationDbContext context)
     {
         // Ensure the company exists first, or create one
-        var company = context.Companies.FirstOrDefault(c => c.Name == "Alice's store") ?? new Company("Alice's store");
+        var company = context.Companies.FirstOrDefault(c => c.Name == "Alice's store") ?? new Company() { Name = "Alice's store" };
 
         if (!context.Companies.Any(c => c.Name == "Alice's store"))
         {
             context.Companies.Add(company);
             context.SaveChanges();
+            
         }
 
         if (!context.Users.Any(u => u.Email == "alice@example.com"))
         {
-            var alice = new User("Alice", "alice@example.com", "alicestrongpass"); 
-            alice.CompanyId = company.Id;  // ✅ Assign the navigation property separately
+            User alice = new User(){Name = "Alice", Email = "alice@example.com", Password = "password", Company = company};
             context.Users.Add(alice);
             context.SaveChanges();
         }

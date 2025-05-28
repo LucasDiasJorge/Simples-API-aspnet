@@ -1,5 +1,5 @@
 ﻿@baseUrl = http://localhost:5196/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImp0aSI6IjQxNzE4OTE5LTgxMTAtNDFlOC1hYjQ3LWIzYjJkNzUyNDk5ZiIsImV4cCI6MTc0ODIyMzQ5MSwiaXNzIjoibXktYXBpIiwiYXVkIjoibXktYXVkaWVuY2UifQ.Kvtkxw45AVAlHBy3YSdJPHWD1LKSNXGA9x8BmECaszQ
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImp0aSI6ImQ5Yjk1OTliLTc0NWQtNDYzZC05Y2ZjLTA3ODBiMjAxNmFkYiIsImV4cCI6MTc0ODM5OTEzOSwiaXNzIjoibXktYXBpIiwiYXVkIjoibXktYXVkaWVuY2UifQ.3ioII-hwHsMDdE-qm-YppxRVu2niuFJoYm75MEy_vzs
 
 ### Login and obtain JWT token
 # This request retrieves the token and sets it as a variable for subsequent calls
@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
   "username": "alice@example.com",
-  "password": "alicestrongpass"
+  "password": "password"
 }
 
 ### Get all users (Requires authentication)
@@ -16,7 +16,7 @@ GET {{baseUrl}}/users
 Authorization: Bearer {{token}}
 
 ### Get a specific user by ID (Requires authentication)
-GET {{baseUrl}}/users/1
+GET {{baseUrl}}/users/08f633e8-7d6d-47c0-8bdb-8e6f55899ac4
 Authorization: Bearer {{token}}
 
 ### Create a new user (Requires authentication)
@@ -25,11 +25,12 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "Charlie",
-  "email": "charlies@example.com",
-  "password": "charliestrongpass",
-  "companyId": "a4325c0d-bc0a-47ca-bdf2-847ab76c1ef2"
-}
+  "name": "Charlie3",
+  "email": "charlie3@example.com",
+  "password": "password",
+  "company": {
+    "id": "0d911a29-d33b-426d-bf6c-0ab7b53433dc"
+  }}
 
 ### Update a user (Requires authentication)
 PUT {{baseUrl}}/users/1

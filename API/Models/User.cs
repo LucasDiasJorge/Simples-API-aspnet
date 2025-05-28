@@ -17,15 +17,7 @@ public class User
     
     public string Password { get; set; }
     
-    [ForeignKey("CompanyId")]
-    public Guid CompanyId { get; set; }
+    public Company Company { get; set; }
 
-    
-    public User(string name, string email, string password)
-    {
-        Name = name;
-        Email = email;
-        Password = password;
-    }
 }
 

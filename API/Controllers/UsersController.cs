@@ -26,7 +26,10 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ResponseEntity<List<User>>>> GetAllUsers()
     {
-        var users = await _context.Users.Include(u => u.CompanyId).ToListAsync();
+        var users = await _context.Users
+            .Include(u => u.Company)
+            .ToListAsync();
+        
         return Ok(new ResponseEntity<List<User>>
         {
             Status = "Success",
@@ -37,9 +40,9 @@ public class UsersController : ControllerBase
 
     // Get user by ID
     [HttpGet("{id}")]
-    public async Task<ActionResult<ResponseEntity<User>>> GetUserById(int id)
+    public async Task<ActionResult<ResponseEntity<User>>> GetUserById(Guid id)
     {
-        var user = await _context.Users.Include(u => u.CompanyId).FirstOrDefaultAsync(u => u.Id.Equals(id));
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
 
         if (user == null)
         {
@@ -59,10 +62,14 @@ public class UsersController : ControllerBase
         });
     }
 
-    // Create user
     [HttpPost]
     public async Task<ActionResult<ResponseEntity<User>>> CreateUser([FromBody] User user)
     {
+        if (user.Company != null)
+        {
+            _context.Attach(user.Company);
+        }
+
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
@@ -74,9 +81,10 @@ public class UsersController : ControllerBase
         });
     }
 
+
     // Update user
     [HttpPut("{id}")]
-    public async Task<ActionResult<ResponseEntity<User>>> UpdateUser(int id, [FromBody] User updatedUser)
+    public async Task<ActionResult<ResponseEntity<User>>> UpdateUser(Guid id, [FromBody] User updatedUser)
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null)
@@ -91,7 +99,7 @@ public class UsersController : ControllerBase
         user.Name = updatedUser.Name;
         user.Email = updatedUser.Email;
         user.Password = updatedUser.Password;
-        user.CompanyId = updatedUser.CompanyId;
+        user.Company.Id = updatedUser.Company.Id;
 
         await _context.SaveChangesAsync();
 
