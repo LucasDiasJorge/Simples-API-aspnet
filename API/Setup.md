@@ -24,3 +24,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
+
+### Remove Last Migration
+```bash
+dotnet ef migrations remove
+```
