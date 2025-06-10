@@ -39,14 +39,14 @@ public class Program
         builder.Services.AddAuthorization();
         
         var app = builder.Build();
-
+        
         app.MapGet("/health", () => Results.Ok(new { Status = "Healthy" }));
 
         // Enable routing and controllers
         app.UseRouting();
         app.UseAuthorization();
         app.MapControllers();
-        
+
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -55,7 +55,7 @@ public class Program
         
         // Custom Middlewares
         app.UseMiddleware<RequestResponseLoggingMiddleware>();
-
+        app.UseMiddleware<ErrorHandlingMiddleware>(); // Order matters
 
         app.Run();
     }

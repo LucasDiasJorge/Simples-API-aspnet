@@ -38,7 +38,6 @@ public class UsersController : ControllerBase
         });
     }
 
-    // Get user by ID
     [HttpGet("{id}")]
     public async Task<ActionResult<ResponseEntity<User>>> GetUserById(Guid id)
     {
@@ -46,12 +45,7 @@ public class UsersController : ControllerBase
 
         if (user == null)
         {
-            return NotFound(new ResponseEntity<User>
-            {
-                Status = "Error",
-                Message = $"User with ID {id} not found.",
-                Data = null
-            });
+            throw new KeyNotFoundException($"User with ID {id} not found.");
         }
 
         return Ok(new ResponseEntity<User>
